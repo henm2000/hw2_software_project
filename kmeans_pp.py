@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import sys
 import copy
+import mykmeanssp as km
+
 def main():
     np.random.seed(1234)
     if (len (sys.argv) > 6 or len(sys.argv) < 5):
@@ -49,8 +51,7 @@ def main():
     df= input_to_dataframe(file_path_1, file_path_2)
     nc_points = copy.deepcopy(df)
     index = np.random.choice(nc_points.index)
-    
-    if (k >= nc_points.loc[index].values.size):
+    if (k >= nc_points["key"].size):
         print("Invalid number of clusters!")
         sys.exit(1)
     centroids = [df.loc[index].values[1:]]
@@ -72,10 +73,26 @@ def main():
     for centroid in centroids:
         for i in range(len(centroid)):
             centroid[i] = float(centroid[i])
-    print (key_array)
-    print(centroids)
 
-          
+    df.drop("key", axis = 1, inplace = True)
+    points = df.values.tolist()
+
+    for point in points:
+        for i in range(len(point)):
+            point[i] = float(point[i])
+    n = len(points)
+    d = len(points[0])
+    result = km.fit(n,k,iter,d,epsilon,centroids,points)
+    for i in range(len(key_array)-1):
+        print(key_array[i], end = ',')
+    print(key_array[i+1])
+
+    for i in range(len(result)):
+        for j in range(len(result[i])-1):
+            print("%.4f" % result[i][j], end = ',')
+        print("%.4f" % result[i][j+1])
+
+
 
 
 def distance_calculation(centroids, df):
