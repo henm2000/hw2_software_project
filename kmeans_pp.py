@@ -11,15 +11,15 @@ def main():
         sys.exit(1)
     if (len(sys.argv) == 6):
         if not is_valid_int(sys.argv[1]):
-            print("an error occurred")
+            print("Invalid number of clusters!")
             sys.exit(1)
         k = int(float(sys.argv[1]))
         if not is_valid_int(sys.argv[2]):
-            print("an error occurred")
+            print("Invalid maximum iteration!")
             sys.exit(1) 
         iter = int(float(sys.argv[2]))
-        if ((iter < 1) or (iter>1000)):
-            print("Invalid maximum iterations!")
+        if ((iter <= 1) or (iter>=1000)):
+            print("Invalid maximum iteration!")
             sys.exit(1)
         try:
             epsilon = float(sys.argv[3])
@@ -51,7 +51,7 @@ def main():
     df= input_to_dataframe(file_path_1, file_path_2)
     nc_points = copy.deepcopy(df)
     index = np.random.choice(nc_points.index)
-    if (k >= nc_points["key"].size):
+    if (k >= nc_points["key"].size or k <= 1):
         print("Invalid number of clusters!")
         sys.exit(1)
     centroids = [df.loc[index].values[1:]]
@@ -83,9 +83,12 @@ def main():
     n = len(points)
     d = len(points[0])
     result = km.fit(n,k,iter,d,epsilon,centroids,points)
-    for i in range(len(key_array)-1):
-        print(key_array[i], end = ',')
-    print(key_array[i+1])
+    if(len(key_array) == 1):
+        print(key_array[0])
+    else:
+        for i in range(len(key_array)-1):
+            print(key_array[i], end = ',')
+        print(key_array[i+1])
 
     for i in range(len(result)):
         for j in range(len(result[i])-1):
